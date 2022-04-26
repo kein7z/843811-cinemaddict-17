@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Роман Покидов](https://up.htmlacademy.ru/ecmascript/17/user/843811).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Рожков](https://htmlacademy.ru/profile/id1069033).
 
 ---
 
