@@ -439,7 +439,6 @@ button {
   box-shadow: -3px 2px 13px 0 #141628;
   overflow-x: hidden;
   overflow-y: auto;
-  /* display: none; */
 }
 
 .film-details__inner {
