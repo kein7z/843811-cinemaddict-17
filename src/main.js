@@ -16,7 +16,6 @@ const commentModel = new CommentModel();
 render(new MainNavigation(), siteMainElement);
 render(new FilterView(), siteMainElement);
 render(new ProfileView(), siteHeaderElement);
-render(new ProfileView(), siteHeaderElement);
 
 sectionFilms.init(siteMainElement, cardFilmModel, commentModel);
 
