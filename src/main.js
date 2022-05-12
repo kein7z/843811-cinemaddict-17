@@ -9,14 +9,14 @@ import CommentModel from './model/comments-model.js';
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = document.querySelector('.header');
 
-const sectionFilms = new SectionFilmsPresenter();
 const cardFilmModel = new CardFilmModel();
 const commentModel = new CommentModel();
+const sectionFilms = new SectionFilmsPresenter(siteMainElement, cardFilmModel, commentModel);
 
 render(new MainNavigation(), siteMainElement);
 render(new FilterView(), siteMainElement);
 render(new ProfileView(), siteHeaderElement);
 
-sectionFilms.init(siteMainElement, cardFilmModel, commentModel);
+sectionFilms.init();
 
 
