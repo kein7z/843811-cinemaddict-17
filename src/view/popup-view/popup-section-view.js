@@ -1,5 +1,5 @@
-import { createElement } from '../../render.js';
 import { humanizeDateRelease } from '../../util.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createPopupSectionTemplate = (films, allComments) => {
   const { poster, ageRating, title, alternativeTitle, totalRating, director, writers, actors, release, runtime, description } = films.filmInfo;
@@ -140,11 +140,12 @@ const createPopupSectionTemplate = (films, allComments) => {
 </section>`);
 };
 
-export default class PopupSectionView {
-  #element = null;
+export default class PopupSectionView extends AbstractView {
   #film = null;
   #filmComments = null;
+
   constructor(film, filmComments) {
+    super();
     this.#film = film;
     this.#filmComments = filmComments;
   }
@@ -153,15 +154,16 @@ export default class PopupSectionView {
     return createPopupSectionTemplate(this.#film, this.#filmComments);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setClickClosePopupHandler = (callback) => {
 
-    return this.#element;
-  }
+    this._callback.clickClosePopup = callback;
 
-  removeElement() {
-    this.#element = null;
-  }
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickClosePopup);
+  };
+
+  #clickClosePopup = (evt) => {
+    evt.preventDefault();
+
+    this._callback.clickClosePopup();
+  };
 }

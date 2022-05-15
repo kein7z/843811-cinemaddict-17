@@ -1,5 +1,5 @@
+import { render } from './framework/render.js';
 import MainNavigation from './view/main-navigation-view.js';
-import { render } from './render.js';
 import FilterView from './view/filter-view.js';
 import SectionFilmsPresenter from './presenter/card-film-list-presenter.js';
 import ProfileView from './view/user-rank-view.js';
