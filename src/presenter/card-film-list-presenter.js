@@ -1,3 +1,4 @@
+import { render } from '../framework/render';
 import SectionFilmsView from '../view/films-card-view/section-films-view';
 import SectionFilmsListView from '../view/films-card-view/section-films-list-view';
 import FilmsListContainerView from '../view/films-card-view/films-list-container-view';
@@ -5,7 +6,6 @@ import CardFilmView from '../view/films-card-view/card-film-view';
 import ShowMoreButton from '../view/films-card-view/show-more-button-view';
 import PopupSectionView from '../view/popup-view/popup-section-view';
 import ListEmptyView from '../view/list-empty-view';
-import { render } from '../render.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -51,13 +51,12 @@ export default class SectionFilmsPresenter {
       if (this.#cardFilmModels.length > FILM_COUNT_PER_STEP) {
         render(this.#showMoreButtonComponent, this.#sectionFilmsList.element);
 
-        this.#showMoreButtonComponent.element.addEventListener('click', this.#handleShowMoreButtonClick);
+        this.#showMoreButtonComponent.setShowMoreButtonClickHandler(this.#handleShowMoreButtonClick);
       }
     }
   };
 
-  #handleShowMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #handleShowMoreButtonClick = () => {
     this.#cardFilmModels
       .slice(this.#renderFilmCount, this.#renderFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => this.#renderFilms(film));
@@ -90,14 +89,14 @@ export default class SectionFilmsPresenter {
       document.addEventListener('keydown', onEscKeyDown);
     };
 
-    cardFilm.element.querySelector('.film-card__link').addEventListener('click', () => {
+    cardFilm.setClickCardFilmHandler(() => {
       if (document.body.querySelector('.film-details')) {
         closePopup();
       }
       openPopup();
     });
 
-    popupSection.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+    popupSection.setClickClosePopupHandler(() => {
       document.removeEventListener('keydown', onEscKeyDown);
       closePopup();
     });
