@@ -7,10 +7,9 @@ const createPopupSectionTemplate = (films, allComments) => {
   const date = release.date !== null
     ? humanizeDateRelease(release.date, 'DD MMMM YYYY')
     : '';
-
   const filmComments = allComments.filter(({ commentId }) => films.comments.some((filmId) => commentId === filmId));
 
-  const createComment = ({author, comment, commentDate, emotion}) => (
+  const createComment = ({ author, comment, commentDate, emotion }) => (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -91,9 +90,9 @@ const createPopupSectionTemplate = (films, allComments) => {
       </div>
 
       <section class="film-details__controls">
-        <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-        <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-        <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+        <button type="button" class="film-details__control-button film-details__control-button--watchlist ${films.userDetails.watchlist ? 'film-details__control-button--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
+        <button type="button" class="film-details__control-button film-details__control-button--watched ${films.userDetails.alreadyWatched ? 'film-details__control-button--active' : ''}" id="watched" name="watched">Already watched</button>
+        <button type="button" class="film-details__control-button film-details__control-button--favorite ${films.userDetails.favorite ? 'film-details__control-button--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
       </section>
     </div>
 
@@ -166,4 +165,36 @@ export default class PopupSectionView extends AbstractView {
 
     this._callback.clickClosePopup();
   };
+
+  setClickAddToWatchlistHandler = (callback) => {
+    this._callback.clickAddToWatchlist = callback;
+    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#Watchlist);
+  };
+
+  setClickAlreadyWatchedHandler = (callback) => {
+    this._callback.clickAlreadyWatched = callback;
+    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#AlreadyWatched);
+  };
+
+  setClickAddToFavoritesHandler = (callback) => {
+    this._callback.clickAddToFavorites = callback;
+    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#Favorites);
+  };
+
+  #Watchlist = (evt) => {
+    evt.preventDefault();
+    this._callback.clickAddToWatchlist();
+  };
+
+  #AlreadyWatched = (evt) => {
+    evt.preventDefault();
+    this._callback.clickAlreadyWatched();
+  };
+
+  #Favorites = (evt) => {
+    evt.preventDefault();
+    this._callback.clickAddToFavorites();
+
+  };
+
 }

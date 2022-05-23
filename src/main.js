@@ -8,10 +8,11 @@ import CommentModel from './model/comments-model.js';
 
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = document.querySelector('.header');
+const siteBodyElement = document.querySelector('body');
 
 const cardFilmModel = new CardFilmModel();
 const commentModel = new CommentModel();
-const sectionFilms = new SectionFilmsPresenter(siteMainElement, cardFilmModel, commentModel);
+const sectionFilms = new SectionFilmsPresenter(siteMainElement, cardFilmModel, commentModel, siteBodyElement);
 
 render(new MainNavigation(), siteMainElement);
 render(new FilterView(), siteMainElement);

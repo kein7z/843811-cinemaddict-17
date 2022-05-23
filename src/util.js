@@ -10,10 +10,22 @@ const getRandomInt = (minNumber, maxNumber) => {
 const getRundomArrayElement = (arr) => arr[getRandomInt(0, arr.length - 1)];
 
 const getRuntimeFilm = (mins) => {
-  const hours = Math.trunc(mins/60);
+  const hours = Math.trunc(mins / 60);
   const minutes = mins % 60;
   return `${hours}h ${minutes}m`;
 };
 
-export { humanizeDateRelease, getRandomInt, getRundomArrayElement, getRuntimeFilm };
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.filmId === update.filmId);
+  if (index === -1) {
+    return items;
+  }
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
+
+export { humanizeDateRelease, getRandomInt, getRundomArrayElement, getRuntimeFilm, updateItem };
 

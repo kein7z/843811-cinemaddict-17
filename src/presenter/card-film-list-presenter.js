@@ -1,11 +1,12 @@
-import { render } from '../framework/render';
+import { remove, render } from '../framework/render';
 import SectionFilmsView from '../view/films-card-view/section-films-view';
 import SectionFilmsListView from '../view/films-card-view/section-films-list-view';
 import FilmsListContainerView from '../view/films-card-view/films-list-container-view';
-import CardFilmView from '../view/films-card-view/card-film-view';
 import ShowMoreButton from '../view/films-card-view/show-more-button-view';
-import PopupSectionView from '../view/popup-view/popup-section-view';
 import ListEmptyView from '../view/list-empty-view';
+import FilmPresenter from './film-presenter';
+import { updateItem } from '../util';
+
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -14,19 +15,23 @@ export default class SectionFilmsPresenter {
   #sectionFilmsList = new SectionFilmsListView();
   #filmsListContainerComponent = new FilmsListContainerView();
   #showMoreButtonComponent = new ShowMoreButton();
+  #listEmpty = new ListEmptyView();
 
   #filmsListContainer = null;
   #cardFilmModel = null;
   #comment = null;
   #cardFilmModels = null;
   #comments = null;
+  #popupContainer = null;
 
   #renderFilmCount = FILM_COUNT_PER_STEP;
+  #filmPresenter = new Map();
 
-  constructor(filmsListContainer, cardFilmModel, comment) {
+  constructor(filmsListContainer, cardFilmModel, comment, popupContainer) {
     this.#filmsListContainer = filmsListContainer;
     this.#cardFilmModel = cardFilmModel;
     this.#comment = comment;
+    this.#popupContainer = popupContainer;
   }
 
   init = () => {
@@ -42,14 +47,14 @@ export default class SectionFilmsPresenter {
     render(this.#filmsListContainerComponent, this.#sectionFilmsList.element);
 
     if (this.#cardFilmModels.every((film) => film.all)) {
-      render(new ListEmptyView(), this.#filmsListContainer);
+      this.#renderListEmty();
     } else {
       for (let i = 0; i < Math.min(this.#cardFilmModels.length, FILM_COUNT_PER_STEP); i++) {
-        this.#renderFilms(this.#cardFilmModels[i]);
+        this.#renderFilm(this.#cardFilmModels[i]);
       }
 
       if (this.#cardFilmModels.length > FILM_COUNT_PER_STEP) {
-        render(this.#showMoreButtonComponent, this.#sectionFilmsList.element);
+        this.#rendershowMoreButton();
 
         this.#showMoreButtonComponent.setShowMoreButtonClickHandler(this.#handleShowMoreButtonClick);
       }
@@ -57,9 +62,7 @@ export default class SectionFilmsPresenter {
   };
 
   #handleShowMoreButtonClick = () => {
-    this.#cardFilmModels
-      .slice(this.#renderFilmCount, this.#renderFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => this.#renderFilms(film));
+    this.#renderFilms();
 
     this.#renderFilmCount += FILM_COUNT_PER_STEP;
 
@@ -69,37 +72,40 @@ export default class SectionFilmsPresenter {
     }
   };
 
-  #renderFilms = (films) => {
-    const cardFilm = new CardFilmView(films);
-    const popupSection = new PopupSectionView(films, this.#comments);
+  #handleModeChange = () => {
+    this.#filmPresenter.forEach((presenter) => presenter.resetPopup());
+  };
 
-    const closePopup = () => {
-      document.body.querySelector('.film-details').remove();
-    };
+  #renderListEmty = () => {
+    render(this.#listEmpty, this.#filmsListContainer);
+  };
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        closePopup();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-    const openPopup = () => {
-      document.body.append(popupSection.element);
-      document.addEventListener('keydown', onEscKeyDown);
-    };
+  #renderFilm = (film) => {
+    const filmPresenter = new FilmPresenter(this.#filmsListContainerComponent.element, this.#handleFilmChange, this.#popupContainer, this.#handleModeChange);
+    filmPresenter.init(film, this.#comments);
+    this.#filmPresenter.set(film.filmId, filmPresenter);
+  };
 
-    cardFilm.setClickCardFilmHandler(() => {
-      if (document.body.querySelector('.film-details')) {
-        closePopup();
-      }
-      openPopup();
-    });
+  #renderFilms = () => {
+    this.#cardFilmModels
+      .slice(this.#renderFilmCount, this.#renderFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((film) => this.#renderFilm(film));
+  };
 
-    popupSection.setClickClosePopupHandler(() => {
-      document.removeEventListener('keydown', onEscKeyDown);
-      closePopup();
-    });
-    render(cardFilm, this.#filmsListContainerComponent.element);
+  #rendershowMoreButton = () => {
+    render(this.#showMoreButtonComponent, this.#sectionFilmsList.element);
+  };
+
+  #handleFilmChange = (updateFilm) => {
+    this.#cardFilmModels = updateItem(this.#cardFilmModels, updateFilm);
+    this.#filmPresenter.get(updateFilm.filmId).init(updateFilm, this.#comments);
+  };
+
+  #clearFilmList = () => {
+    this.#filmPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmPresenter.clear();
+    this.#renderFilmCount = FILM_COUNT_PER_STEP;
+    remove(this.#showMoreButtonComponent);
   };
 }
+

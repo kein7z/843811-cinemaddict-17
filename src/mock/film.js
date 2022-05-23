@@ -1,5 +1,5 @@
 import { getRundomArrayElement, getRuntimeFilm, getRandomInt  } from '../util';
-
+import { nanoid } from 'nanoid';
 const POSTERS_AND_TITLES_FILMS = [
   {
     title: 'made-for-each-other',
@@ -38,7 +38,7 @@ export const generateCardFilm = () => {
   const description = descriptions.split('.');
 
   return {
-    filmId: 0,
+    filmId: nanoid(),
     comments: [1, 3],
     filmInfo: {
       title: posterAndTitleFilm.title,
@@ -66,8 +66,8 @@ export const generateCardFilm = () => {
       description: getRundomArrayElement(description)
     },
     userDetails: {
-      watchlist: false,
-      alreadyWatched: true,
+      watchlist: true,
+      alreadyWatched: false,
       watchingDate: '2019-04-12T16:12:32.554Z',
       favorite: false
     }
