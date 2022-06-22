@@ -10,12 +10,18 @@ const COMMENT_AUTHORS = [
   'Neil Patrick Harris',
 ];
 
-export const generateComment = () => (
-  {
-    commentId: getRandomInt(1, 5),
+let commentsCount = 0;
+
+export const generateComment = () => {
+  commentsCount++;
+
+  return {
+    commentId: commentsCount,
     author: getRundomArrayElement(COMMENT_AUTHORS),
     comment: `${TEXT.split('. ')[getRandomInt(0, TEXT.split('. ').length - 1)]}.`,
     commentDate: '2019-05-12T17:12:32.554Z',
     emotion: getRundomArrayElement(EMOTIONS)
-  }
-);
+  };
+};
+
+export {EMOTIONS};

@@ -1,4 +1,4 @@
-import { getRundomArrayElement, getRuntimeFilm, getRandomInt  } from '../util';
+import { getRundomArrayElement, getRuntimeFilm, getRandomInt, getRandomReleaseDate } from '../util';
 import { nanoid } from 'nanoid';
 const POSTERS_AND_TITLES_FILMS = [
   {
@@ -39,7 +39,7 @@ export const generateCardFilm = () => {
 
   return {
     filmId: nanoid(),
-    comments: [1, 3],
+    comments: Array.from({length: 5}, () => getRandomInt(1, 100)),
     filmInfo: {
       title: posterAndTitleFilm.title,
       alternativeTitle: posterAndTitleFilm.title,
@@ -58,7 +58,7 @@ export const generateCardFilm = () => {
         ' Dan Duryea'
       ],
       release: {
-        date: '2019-05-11T00:00:00.000Z',
+        date: getRandomReleaseDate(),
         releaseCountry: 'Finland'
       },
       runtime: getRuntimeFilm((getRandomInt(50, 180))),
