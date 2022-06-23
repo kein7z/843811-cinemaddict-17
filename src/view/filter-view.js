@@ -1,14 +1,46 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilterTemplate = () => `
-  <ul class="sort">
-    <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-    <li><a href="#" class="sort__button">Sort by date</a></li>
-    <li><a href="#" class="sort__button">Sort by rating</a></li>
-  </ul>`;
+const createFilterTemplate = (filter, currentFilterType  ) => {
+  const {type, name, count} = filter;
+  return (`
+    <a href="#${name}" class="main-navigation__item ${type === currentFilterType ? 'main-navigation__item--active' : ''}"  value="${type}">
+    ${name}
+    <span class="main-navigation__item-count">${count}</span>
+    </a>`);
+};
+
+const createNavigationTemplate = (filterItems, currentFilterType) => {
+  const filterItemsTemplate = filterItems
+    .map((filter) => createFilterTemplate(filter, currentFilterType))
+    .join('');
+
+  return `<nav class="main-navigation">
+    ${filterItemsTemplate}
+  </nav>`;
+};
 
 export default class FilterView extends AbstractView {
-  get template() {
-    return createFilterTemplate();
+
+  #filters = null;
+  #currentFilter = null;
+
+  constructor(filters, currentFilter) {
+    super();
+    this.#filters = filters;
+    this.#currentFilter = currentFilter;
   }
+
+  get template() {
+    return createNavigationTemplate(this.#filters, this.#currentFilter);
+  }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('click', this.#filterTypeChangeHandler);
+  };
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.attributes.value.value);
+  };
 }
